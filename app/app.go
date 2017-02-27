@@ -1,12 +1,11 @@
 package app
 
 import (
-	"database/sql"
 	"net/http"
 )
 
 type Context struct {
-	DB *sql.DB
+	DB *DB
 }
 
 type Handler struct {
