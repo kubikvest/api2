@@ -1,15 +1,15 @@
 package main
 
 import (
-	"net/http"
-	"time"
+	"context"
 	"fmt"
+	"github.com/kubikvest/api2/app"
+	"github.com/kubikvest/api2/games"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
-	"github.com/kubikvest/api2/app"
-	"github.com/kubikvest/api2/games"
-	"context"
+	"time"
 )
 
 func main() {
@@ -20,7 +20,7 @@ func main() {
 	port := os.Getenv("DB_PORT")
 
 	db, _ := app.Open(fmt.Sprintf("%s:%s@tcp(%s:%s)/billing?charset=utf8&parseTime=True&loc=Local", user, pass, host, port))
-	appctx := &app.Context{DB:db}
+	appctx := &app.Context{DB: db}
 
 	mux := http.NewServeMux()
 

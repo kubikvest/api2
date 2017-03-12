@@ -1,14 +1,16 @@
 package main
 
 import (
-	"gopkg.in/gcfg.v1"
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
-	"flag"
-	"os"
-	"fmt"
-	"os/user"
 	"errors"
+	"flag"
+	"fmt"
+	"os"
+	"os/user"
+
+	_ "github.com/go-sql-driver/mysql"
+	"github.com/kubikvest/api2/games"
+	"gopkg.in/gcfg.v1"
 )
 
 func main() {
@@ -30,10 +32,12 @@ func main() {
 
 	app.DB = db
 
-	row, _ := db.Query("SELECT 1")
+	gameM := games.GameMapper{
+		DB: db,
+	}
 
-	fmt.Println(res.)
-
+	game, err := gameM.GetGame("111")//app.Args.GameId)
+	fmt.Println(game, err)
 }
 
 type Config struct {

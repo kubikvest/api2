@@ -22,15 +22,18 @@ CREATE TABLE `kv_user` (
 DROP TABLE IF EXISTS `kv_group`;
 
 CREATE TABLE `kv_group` (
-  `groupId`    CHAR(36) NOT NULL,
-  `gameId`     CHAR(36)             DEFAULT NULL,
-  `questId`    CHAR(36)             DEFAULT NULL,
-  `pointId`    CHAR(36)             DEFAULT NULL,
-  `users`      BLOB,
-  `pin`        SMALLINT(4) UNSIGNED DEFAULT NULL,
-  `startPoint` DATETIME,
-  `active`     TINYINT(2) UNSIGNED  DEFAULT 1
+  `group_id`    CHAR(36) NOT NULL,
+  `game_id`     CHAR(36)             DEFAULT NULL,
+  `quest_id`    CHAR(36)             DEFAULT NULL,
+  `point_id`    CHAR(36)             DEFAULT NULL,
+  `users`       BLOB,
+  `pin`         SMALLINT(4) UNSIGNED DEFAULT NULL,
+  `start_point` DATETIME,
+  `active`      TINYINT(2) UNSIGNED  DEFAULT 1
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8;
 
 INSERT kv_user (user_id, provider, uid, access_token)
 VALUES ('adff5c92-008c-47ac-bad8-11be43ea1469', 'vk', 1111, 'token');
+
+INSERT kv_group (group_id, game_id, quest_id, point_id, users, pin, start_point, active)
+    VALUES ('a', 'b', 'c', 'd', '[]', 1234, '2017-02-27 09:26:00', 1);
