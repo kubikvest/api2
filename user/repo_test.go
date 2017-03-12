@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"testing"
 
-	"github.com/DATA-DOG/go-sqlmock"
 	"fmt"
+	"github.com/DATA-DOG/go-sqlmock"
 )
 
 func NewMock(t *testing.T) (*sql.DB, sqlmock.Sqlmock) {
@@ -38,11 +38,11 @@ func TestCreate(t *testing.T) {
 	}
 
 	u := &User{
-		UserID: "11",
+		UserID:   "11",
 		Provider: "22",
-		Uid: 33,
-		Token: "44",
-		Ttl: 55,
+		Uid:      33,
+		Token:    "44",
+		Ttl:      55,
 	}
 
 	r.Create(u)
@@ -73,11 +73,11 @@ func TestCreateError(t *testing.T) {
 	}
 
 	u := &User{
-		UserID: "11",
+		UserID:   "11",
 		Provider: "22",
-		Uid: 33,
-		Token: "44",
-		Ttl: 55,
+		Uid:      33,
+		Token:    "44",
+		Ttl:      55,
 	}
 
 	r.Create(u)
@@ -98,11 +98,11 @@ func TestCreateErrorBegin(t *testing.T) {
 	}
 
 	u := &User{
-		UserID: "11",
+		UserID:   "11",
 		Provider: "22",
-		Uid: 33,
-		Token: "44",
-		Ttl: 55,
+		Uid:      33,
+		Token:    "44",
+		Ttl:      55,
 	}
 
 	r.Create(u)
@@ -133,14 +133,45 @@ func TestCreateErrorRollBack(t *testing.T) {
 	}
 
 	u := &User{
-		UserID: "11",
+		UserID:   "11",
 		Provider: "22",
-		Uid: 33,
-		Token: "44",
-		Ttl: 55,
+		Uid:      33,
+		Token:    "44",
+		Ttl:      55,
 	}
 
 	r.Create(u)
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expections: %s", err)
+	}
+}
+
+func TestUpdate(t *testing.T) {
+	mockDb, mock := NewMock(t)
+	defer mockDb.Close()
+
+	mock.ExpectBegin()
+	ee := mock.ExpectExec("UPDATE")
+	ee.WithArgs(
+		"1",
+		2,
+		"11",
+	)
+	ee.WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	r := userRepo{
+		db: mockDb,
+	}
+
+	u := &User{
+		UserID: "11",
+		Token:  "1",
+		Ttl:    2,
+	}
+
+	r.Update(u)
 
 	if err := mock.ExpectationsWereMet(); err != nil {
 		t.Errorf("there were unfulfilled expections: %s", err)

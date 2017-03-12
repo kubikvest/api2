@@ -47,3 +47,26 @@ func (r *userRepo) Create(u *User) error {
 
 	return nil
 }
+
+func (r *userRepo) Update(u *User) error {
+	tx, err := r.db.Begin()
+	if err != nil {
+		fmt.Errorf("Tx fail %s", err)
+		return err
+	}
+	defer tx.Commit()
+	_, err = tx.Exec(
+		"UPDATE kv_user SET token = ?, ttl = ? WHERE user_id = ?",
+		u.Token,
+		u.Ttl,
+		u.UserID,
+	)
+	if err != nil {
+		fmt.Errorf("Could not update user %s", err)
+		if err := tx.Rollback(); err != nil {
+			fmt.Errorf("Rollback user fail %s", err)
+		}
+		return err
+	}
+	return nil
+}
