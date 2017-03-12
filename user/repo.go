@@ -3,7 +3,6 @@ package user
 import (
 	"database/sql"
 	"fmt"
-	"github.com/Sirupsen/logrus"
 )
 
 type UserRepo interface {
@@ -19,14 +18,18 @@ type User struct {
 }
 
 type userRepo struct {
-	db: *sql.DB
+	db *sql.DB
 }
 
 func (r *userRepo) Create(u *User) error {
-	tx := r.db.Begin()
+	tx, err := r.db.Begin()
+	if err != nil {
+		fmt.Errorf("Tx user fail %s", err)
+		return err
+	}
 	defer tx.Commit()
-	
-	_, err := tx.Exec(
+
+	_, err = tx.Exec(
 		"INSERT kv_user (user_id, provider, uid, token, ttl) value (?, ?, ?, ?, ?)",
 		u.UserID,
 		u.Provider,
@@ -36,7 +39,9 @@ func (r *userRepo) Create(u *User) error {
 	)
 	if err != nil {
 		fmt.Errorf("Could not create user %s", err)
-		tx.Rollback
+		if err := tx.Rollback(); err != nil {
+			fmt.Errorf("Rollback user fail %s", err)
+		}
 		return err
 	}
 
