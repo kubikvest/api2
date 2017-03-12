@@ -17,7 +17,7 @@ func NewMock(t *testing.T) (*sql.DB, sqlmock.Sqlmock) {
 	return db, mock
 }
 
-func TestCreate(t *testing.T) {
+func TestUser_Create(t *testing.T) {
 	mockDb, mock := NewMock(t)
 	defer mockDb.Close()
 
@@ -52,7 +52,7 @@ func TestCreate(t *testing.T) {
 	}
 }
 
-func TestCreateError(t *testing.T) {
+func TestUser_Create_Error(t *testing.T) {
 	mockDb, mock := NewMock(t)
 	defer mockDb.Close()
 
@@ -87,7 +87,7 @@ func TestCreateError(t *testing.T) {
 	}
 }
 
-func TestCreateErrorBegin(t *testing.T) {
+func TestUser_Create_Error_Begin(t *testing.T) {
 	mockDb, mock := NewMock(t)
 	defer mockDb.Close()
 
@@ -112,7 +112,7 @@ func TestCreateErrorBegin(t *testing.T) {
 	}
 }
 
-func TestCreateErrorRollBack(t *testing.T) {
+func TestUser_Create_Error_RollBack(t *testing.T) {
 	mockDb, mock := NewMock(t)
 	defer mockDb.Close()
 
@@ -147,7 +147,7 @@ func TestCreateErrorRollBack(t *testing.T) {
 	}
 }
 
-func TestUpdate(t *testing.T) {
+func TestUser_Update(t *testing.T) {
 	mockDb, mock := NewMock(t)
 	defer mockDb.Close()
 
@@ -160,6 +160,37 @@ func TestUpdate(t *testing.T) {
 	)
 	ee.WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
+
+	r := userRepo{
+		db: mockDb,
+	}
+
+	u := &User{
+		UserID: "11",
+		Token:  "1",
+		Ttl:    2,
+	}
+
+	r.Update(u)
+
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expections: %s", err)
+	}
+}
+
+func TestUser_Update_Error(t *testing.T) {
+	mockDb, mock := NewMock(t)
+	defer mockDb.Close()
+
+	mock.ExpectBegin()
+	ee := mock.ExpectExec("UPDATE")
+	ee.WithArgs(
+		"1",
+		2,
+		"11",
+	)
+	ee.WillReturnError(fmt.Errorf("Gen error"))
+	mock.ExpectRollback()
 
 	r := userRepo{
 		db: mockDb,
